@@ -25,17 +25,25 @@ Time::Verbal trys to represent time-related info as verbal text.
 
 use strict;
 use warnings;
-use Object::Tiny;
+use Object::Tiny qw(locale);
+use File::Spec;
+use Locale::Wolowitz;
+
+sub wolowitz {
+    my ($self) = @_;
+    $self->{wolowitz} ||= do {
+        my @i18n_dir = (File::Spec->splitdir(__FILE__), "i18n");
+        $i18n_dir[-2] =~ s/\.pm//;
+
+        Locale::Wolowitz->new(File::Spec->catdir(@i18n_dir));
+    };
+
+    return $self->{wolowitz}
+}
 
 sub loc {
-    my ($self, $id, @args) = @_;
-    my $ret = $id;
-    if (scalar @args) {
-        for (my $i = 1; $i <= scalar @args; $i++) {
-            $ret =~ s/%$i/$args[$i-1]/g;
-        }
-    }
-    return $ret;
+    my ($self, $msg, @args) = @_;
+    return $self->wolowitz->loc( $msg, $self->locale || "en" , @args );
 }
 
 =method distance($from_time, $to_time)
@@ -59,8 +67,10 @@ For time distances larger the a year, it'll always be "over a year".
 
 sub distance {
     my $self = shift;
-    unshift(@_, $self) unless ref $self;
-    $self = __PACKAGE__->new;
+    unless (ref($self)) {
+        unshift(@_, $self);
+        $self = __PACKAGE__->new;
+    }
 
     my ($from_time, $to_time) = @_;
 
