@@ -25,26 +25,10 @@ Time::Verbal trys to represent time-related info as verbal text.
 
 use strict;
 use warnings;
+use encoding 'utf8';
 use Object::Tiny qw(locale);
 use File::Spec;
 use Locale::Wolowitz;
-
-sub wolowitz {
-    my ($self) = @_;
-    $self->{wolowitz} ||= do {
-        my @i18n_dir = (File::Spec->splitdir(__FILE__), "i18n");
-        $i18n_dir[-2] =~ s/\.pm//;
-
-        Locale::Wolowitz->new(File::Spec->catdir(@i18n_dir));
-    };
-
-    return $self->{wolowitz}
-}
-
-sub loc {
-    my ($self, $msg, @args) = @_;
-    return $self->wolowitz->loc( $msg, $self->locale || "en" , @args );
-}
 
 =method distance($from_time, $to_time)
 
@@ -62,6 +46,23 @@ The possible outputs are:
     - over a year
 
 For time distances larger the a year, it'll always be "over a year".
+
+The returned string is a localized string if the object is constructed with locale
+parameter:
+
+    my $tv = Time::Verbal->new(locale => "zh_TW");
+    say $tv->distance(time, time + 3600);
+    #=> 一小時
+
+Internally l10n is done with L<Locale::Wolowitz>, which means the dictionary
+files are just a bunch of JSON text files that you can locate with this command:
+
+    perl -MTime::Verbal -E 'say Time::Verbal->i18n_dir'
+
+In case you need to provide your own translation JSON files, you may specify
+the value of i18n_dir pointing to your own dir:
+
+    my $tv = Time::Verbal->new(locale => "xx", i18n_dir => "/app/awesome/i18n");
 
 =cut
 
@@ -101,6 +102,41 @@ sub distance {
     }
 
     return $self->loc("over a year");
+}
+
+sub loc {
+    my ($self, $msg, @args) = @_;
+    return $self->wolowitz->loc( $msg, $self->locale || "en" , @args );
+}
+
+sub i18n_dir {
+    my ($self, $dir) = @_;
+
+    my $i18n_dir = sub {
+        my @i18n_dir = (File::Spec->splitdir(__FILE__), "i18n");
+        $i18n_dir[-2] =~ s/\.pm//;
+        return File::Spec->catdir(@i18n_dir);
+    };
+
+    if (ref($self)) {
+        if (defined($dir)) {
+            $self->{i18n_dir} = $dir;
+        }
+
+        if (defined($self->{i18n_dir})) {
+            return $self->{i18n_dir}
+        }
+
+        return $self->{i18n_dir} = $i18n_dir->();
+    }
+
+    return $i18n_dir->();
+}
+
+sub wolowitz {
+    my ($self) = @_;
+    $self->{wolowitz} ||= Locale::Wolowitz->new( $self->i18n_dir);
+    return $self->{wolowitz}
 }
 
 1;
