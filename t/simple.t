@@ -8,24 +8,28 @@ use Time::Verbal;
 
 my $now = time;
 
-ok Time::Verbal::distance($now, $now),      "just now";
-ok Time::Verbal::distance($now, $now + 1),  "just now";
-ok Time::Verbal::distance($now, $now + 63), "about 1 minute ago";
-
-ok Time::Verbal::distance($now),      "just now";
-ok Time::Verbal::distance($now + 1),  "just now";
-ok Time::Verbal::distance($now + 6),  "just now";
-ok Time::Verbal::distance($now + 7),  "7 seconds ago";
-ok Time::Verbal::distance($now + 63), "about 1 minute ago";
-ok Time::Verbal::distance($now + 3700), "about 1 hour ago";
-ok Time::Verbal::distance($now + 10800), "about 3 hours ago";
-ok Time::Verbal::distance($now + 86405), "yesterday";
-ok Time::Verbal::distance($now + 86400 * 300), "300 days ago";
-ok Time::Verbal::distance($now + 86400 * 600), "over a year ago";
-ok Time::Verbal::distance($now + 86400 * 1000), "over a year ago";
-
-dies_ok {
-    Time::Verbal::distance($now - 63)
-} "The argument should be an non-negative number.";
+is Time::Verbal::distance($now, $now),      "less then a minute";
+is Time::Verbal::distance($now, $now + 29), "less then a minute";
+is Time::Verbal::distance($now, $now + 63), "about 1 minute";
+is Time::Verbal::distance($now, $now + 89), "about 1 minute";
+is Time::Verbal::distance($now, $now + 90), "2 minutes";
+is Time::Verbal::distance($now, $now + 119), "2 minutes";
+is Time::Verbal::distance($now, $now + 120), "2 minutes";
+is Time::Verbal::distance($now, $now + 3700), "about 1 hour";
+is Time::Verbal::distance($now, $now + 5400), "2 hours";
+is Time::Verbal::distance($now, $now + 10800), "3 hours";
+is Time::Verbal::distance($now, $now + 86405), "yesterday";
+is Time::Verbal::distance($now, $now + 86400 * 300), "300 days";
+is Time::Verbal::distance($now, $now + 86400 * 600), "over a year";
+is Time::Verbal::distance($now, $now + 86400 * 1000), "over a year";
+is Time::Verbal::distance($now, $now),      "less then a minute";
+is Time::Verbal::distance($now, $now - 29), "less then a minute";
+is Time::Verbal::distance($now, $now - 63), "about 1 minute";
+is Time::Verbal::distance($now, $now - 3700), "about 1 hour";
+is Time::Verbal::distance($now, $now - 10800), "3 hours";
+is Time::Verbal::distance($now, $now - 86405), "yesterday";
+is Time::Verbal::distance($now, $now - 86400 * 300), "300 days";
+is Time::Verbal::distance($now, $now - 86400 * 600), "over a year";
+is Time::Verbal::distance($now, $now - 86400 * 1000), "over a year";
 
 done_testing;
