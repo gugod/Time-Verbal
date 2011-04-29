@@ -50,7 +50,7 @@ For time distances larger the a year, it'll always be "over a year".
 The returned string is a localized string if the object is constructed with locale
 parameter:
 
-    my $tv = Time::Verbal->new(locale => "zh_TW");
+    my $tv = Time::Verbal->new(locale => "zh-TW");
     say $tv->distance(time, time + 3600);
     #=> 一小時
 
@@ -95,7 +95,7 @@ sub distance {
         return $self->loc('%1 hours', int(0.5+ $delta / 3600));
     }
     if ($delta > 86400 && $delta < 86400 * 2) {
-        return $self->loc("yesterday");
+        return $self->loc("one day");
     }
     if ($delta < 86400 * 365) {
         return $self->loc('%1 days', int($delta / 86400));
