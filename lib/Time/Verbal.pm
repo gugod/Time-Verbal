@@ -30,6 +30,29 @@ use Object::Tiny qw(locale);
 use File::Spec;
 use Locale::Wolowitz;
 
+=method new( key => value, ... )
+
+The constructor. You may pass arguments as key-value pairs.
+
+The valid keys are:
+
+    - locale
+    - i18n_dir
+
+They are both optional, and are both for i18n purpose.
+
+The value of C<locale> should be one of the ISO language code.
+The valid ones for the release are:
+
+    ar bg bn-IN bs ca cy da de-AT de-CH de dsb el en-AU en-GB en-US eo
+    es-AR es-CL es-CO es-MX es-PE es et eu fa fi fr-CA fr-CH fr fur gl-ES
+    gsw-CH he hi-IN hi hr hsb hu id is it ja ko lo lt lv mk mn nb nl nn pl
+    pt-BR pt-PT rm ro ru sk sl sr-Latn sr sv-SE sw tr uk vi zh-CN zh-TW
+
+However, you may pass something not in this list as long as you also provide
+a path (string) for C<i18n_dir> pointing to a directory with JSON files that
+are recongized by L<Locale::Wolowitz>.
+
 =method distance($from_time, $to_time)
 
 Returns the distance of two timestamp in words.
@@ -63,6 +86,16 @@ In case you need to provide your own translation JSON files, you may specify
 the value of i18n_dir pointing to your own dir:
 
     my $tv = Time::Verbal->new(locale => "xx", i18n_dir => "/app/awesome/i18n");
+
+Your should start by copying and modify one of the JSON file under
+C<Time::Verbal->i18n_dir>. The JSON file should be named after the
+language code as a good convention, but there is no strict rule for
+that. As a result, you may create your own language code like
+"LOLSPEAK" by first creating the translation file <LOLSPEAK.json>, and
+use "LOLSPEAK" as the value of C<locale> attribute of the object.
+
+Current translations are imported from the rails-i18n project at
+L<https://github.com/svenfuchs/rails-i18n>
 
 =cut
 
