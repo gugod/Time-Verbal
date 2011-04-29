@@ -1,7 +1,6 @@
 #!/usr/bin/env perl
 # import translations from rails i18n project
 
-use 5.012;
 use strict;
 use warnings;
 use utf8;
@@ -16,9 +15,6 @@ my $rails1i8n_dir = shift @ARGV or die;
 my $out_i18n_dir = "$FindBin::Bin/i18n";
 
 my $cwd = Cwd::getcwd();
-
-say "CWD: $cwd";
-say "OUT: $out_i18n_dir";
 
 find sub {
     /([^\/]+)\.yml/ or return;
