@@ -44,7 +44,7 @@ Returns the distance of two timestamp in words.
 The possible outputs are:
 
     - less than a minute
-    - about 1 minute
+    - 1 minute
     - 3 minutes
     - about 1 hour
     - 6 hours
@@ -67,7 +67,7 @@ sub distance {
         return loc("less then a minute")
     }
     if ($delta < 90) {
-        return loc("about 1 minute");
+        return loc("1 minute");
     }
     if ($delta < 3600) {
         return loc('%1 minutes', int(0.5+$delta / 60));
