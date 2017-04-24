@@ -5,7 +5,6 @@ use Test::More;
 use Test::Exception;
 use Time::Verbal;
 use utf8;
-use encoding 'utf8';
 
 my $now = time;
 
