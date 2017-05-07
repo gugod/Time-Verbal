@@ -10,26 +10,12 @@ use File::Find;
 use FindBin;
 use Cwd;
 
-my $rails1i8n_dir = shift @ARGV or die;
+sub convert_one_locale {
+    my ($code, $input_file, $output_file) = @_;
 
-my $out_i18n_dir = "$FindBin::Bin/../lib/Time/Verbal/i18n";
+    my $dict = YAML::Syck::LoadFile($input_file)->{$code}{datetime}{distance_in_words};
 
-my $cwd = Cwd::getcwd();
-
-find sub {
-    /([^\/]+)\.yml/ or return;
-    my $code = $1;
-
-    my $dict;
-    eval {
-        $dict = YAML::Syck::LoadFile($File::Find::name)->{$code}{datetime}{distance_in_words};
-        1;
-    } or do {
-        print "Error loading file: $File::Find::name\n$@\n";
-        return;
-    };
-
-
+    print "Processing $File::Find::name\n";
     my %lexicon = (
         "less then a minute" => $dict->{less_than_x_minutes}{one},
         "1 minute"           => $dict->{x_minutes}{one},
@@ -46,9 +32,26 @@ find sub {
     }
 
     my $j = JSON::PP->new;
-    my $out_file =  "$out_i18n_dir/$code.json";
-    open(my $fh, ">", $out_file) or die "$out_file: $!";
+    open(my $fh, ">", $output_file) or die "$output_file: $!";
     print $fh $j->encode(\%lexicon) . "\n";
     close $fh;
+}
 
+my $rails1i8n_dir = shift @ARGV or die;
+my $out_i18n_dir = "$FindBin::Bin/../lib/Time/Verbal/i18n";
+
+my $cwd = Cwd::getcwd();
+
+find sub {
+    /([^\/]+)\.yml/ or return;
+
+    my $code = $1;
+    my $output_file =  "$out_i18n_dir/$code.json";
+
+    eval {
+        convert_one_locale($code, $File::Find::name, $output_file);
+        1;
+    } or do {
+        print STDERR "Failed to convert: $File::Find::name => $output_file: $@\n";
+    };
 }, "${rails1i8n_dir}/rails/locale";
