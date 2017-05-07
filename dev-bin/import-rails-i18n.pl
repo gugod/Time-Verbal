@@ -4,7 +4,7 @@
 use strict;
 use warnings;
 use utf8;
-use YAML::XS;
+use YAML;
 use JSON::Any;
 use File::Find;
 use FindBin;
@@ -19,7 +19,7 @@ my $cwd = Cwd::getcwd();
 find sub {
     /([^\/]+)\.yml/ or return;
     my $code = $1;
-    my $dict = YAML::XS::LoadFile($File::Find::name)->{$code}{datetime}{distance_in_words};
+    my $dict = YAML::LoadFile($File::Find::name)->{$code}{datetime}{distance_in_words};
 
     my %lexicon = (
         "less then a minute" => $dict->{less_than_x_minutes}{one},
@@ -33,7 +33,7 @@ find sub {
     );
 
     for my $k (keys %lexicon) {
-        $lexicon{$k} =~ s/%{count}/%1/g;
+        $lexicon{$k} =~ s/%\{count\}/%1/g;
     }
 
     my $j = JSON::Any->new;
