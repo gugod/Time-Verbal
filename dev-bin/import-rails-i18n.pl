@@ -4,22 +4,31 @@
 use strict;
 use warnings;
 use utf8;
-use YAML;
-use JSON::Any;
+use YAML::Syck;
+use JSON::PP;
 use File::Find;
 use FindBin;
 use Cwd;
 
 my $rails1i8n_dir = shift @ARGV or die;
 
-my $out_i18n_dir = "$FindBin::Bin/i18n";
+my $out_i18n_dir = "$FindBin::Bin/../lib/Time/Verbal/i18n";
 
 my $cwd = Cwd::getcwd();
 
 find sub {
     /([^\/]+)\.yml/ or return;
     my $code = $1;
-    my $dict = YAML::LoadFile($File::Find::name)->{$code}{datetime}{distance_in_words};
+
+    my $dict;
+    eval {
+        $dict = YAML::Syck::LoadFile($File::Find::name)->{$code}{datetime}{distance_in_words};
+        1;
+    } or do {
+        print "Error loading file: $File::Find::name\n$@\n";
+        return;
+    };
+
 
     my %lexicon = (
         "less then a minute" => $dict->{less_than_x_minutes}{one},
@@ -36,11 +45,10 @@ find sub {
         $lexicon{$k} =~ s/%\{count\}/%1/g;
     }
 
-    my $j = JSON::Any->new;
+    my $j = JSON::PP->new;
     my $out_file =  "$out_i18n_dir/$code.json";
-    open(my $fh, ">", $out_file);
-    print $fh $j->encode(\%lexicon);
-    print $fh "\n";
+    open(my $fh, ">", $out_file) or die "$out_file: $!";
+    print $fh $j->encode(\%lexicon) . "\n";
     close $fh;
 
 }, "${rails1i8n_dir}/rails/locale";
