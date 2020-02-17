@@ -17,6 +17,8 @@ is Time::Verbal::distance($now, $now + 120), "2 minutes";
 is Time::Verbal::distance($now, $now + 3700), "about 1 hour";
 is Time::Verbal::distance($now, $now + 5400), "2 hours";
 is Time::Verbal::distance($now, $now + 10800), "3 hours";
+is Time::Verbal::distance($now, $now + 86399), "24 hours";
+is Time::Verbal::distance($now, $now + 86400), "one day";
 is Time::Verbal::distance($now, $now + 86405), "one day";
 is Time::Verbal::distance($now, $now + 86400 * 300), "300 days";
 is Time::Verbal::distance($now, $now + 86400 * 600), "over a year";

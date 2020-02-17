@@ -36,7 +36,7 @@ sub distance {
     if ($delta < 86400) {
         return $self->loc('%1 hours', int(0.5+ $delta / 3600));
     }
-    if ($delta > 86400 && $delta < 86400 * 2) {
+    if ($delta >= 86400 && $delta < 86400 * 2) {
         return $self->loc("one day");
     }
     if ($delta < 86400 * 365) {
