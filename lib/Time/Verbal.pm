@@ -90,22 +90,24 @@ sub wolowitz {
     use Time::Verbal;
 
     my $now = time;
+    my $then = $now - 76543210;
 
-    # Print the distance of two times in words.
-    say Time::Verbal::distance($now, $now);
-    #=> less the a minute
+    my $o = Time::Verbal->new();
 
-    # The second argument must not be less the the first one.
-    say Time::Verbal::distance($now, $now + 4200);
+    say $o->distance($then, $now);
+    #=> over a year
+
+    say $o->distance($now, $then);
     #=> about 1 hour
 
 =head1 DESCRIPTION
 
-Time::Verbal trys to represent time-related info as verbal text.
+Time::Verbal is a module for converting the difference between two
+timestamps to its verbal form -- something a human would say.
 
-=method new( key => value, ... )
+=method new(...)
 
-The constructor. You may pass arguments as key-value pairs.
+The constructor, with arguments being a list of key-value pairs.
 
 The valid keys are:
 
@@ -128,9 +130,9 @@ are recongized by L<Locale::Wolowitz>.
 
 =method distance($from_time, $to_time)
 
-Returns the distance of two timestamp in words.
+Returns the absolute distance of two timestamp in words.
 
-The possible outputs are:
+Output are in one of these forms:
 
     - less than a minute
     - 1 minute
