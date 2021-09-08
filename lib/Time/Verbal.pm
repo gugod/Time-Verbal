@@ -166,8 +166,8 @@ Your should start by copying and modify one of the JSON file under
 C<Time::Verbal->i18n_dir>. The JSON file should be named after the
 language code as a good convention, but there is no strict rule for
 that. As a result, you may create your own language code like
-"LOLSPEAK" by first creating the translation file <LOLSPEAK.json>, and
-use "LOLSPEAK" as the value of C<locale> attribute of the object.
+C<"LOLSPEAK"> by first creating the translation file C<LOLSPEAK.json>, then
+use C<"LOLSPEAK"> as the value of C<locale> attribute.
 
 Current translations are imported from the rails-i18n project at
 L<https://github.com/svenfuchs/rails-i18n>
