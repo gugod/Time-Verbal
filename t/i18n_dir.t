@@ -3,7 +3,7 @@ use Test2::V0;
 use Time::Verbal;
 use FindBin;
 
-subetst "accessor", sub {
+subtest "accessor", sub {
     my $tv = Time::Verbal->new(i18n_dir => "/tmp");
     is $tv->i18n_dir, "/tmp";
 };
