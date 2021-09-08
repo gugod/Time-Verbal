@@ -13,7 +13,9 @@ jobs:
         run: cpanm -q -n --no-man-pages App::cpm
       - name: Install Toolchain
         run: cpm install -g Dist::Zilla
-      - name: Install Dependencies
+      - name: Install Authoring Dependencies
         run: dzil authordeps | cpm install -g -
+      - name: Install Module Dependencies
+        run: dzil listdeps | cpm install -g -
       - name: smoke
         run: dzil smoke
